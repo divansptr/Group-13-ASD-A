@@ -12,6 +12,7 @@ public class Sudoku extends JFrame {
     // private variables
     GameBoardPanel board = new GameBoardPanel();
     JButton btnNewGame = new JButton("New Game");
+    private String playerName; //tambahan fitur input name
 
     // Constructor
     public Sudoku() {
@@ -40,6 +41,12 @@ public class Sudoku extends JFrame {
     }
 
     private void welcomeScreen() {
+        // Prompt for player name first
+        String name = JOptionPane.showInputDialog(this, "Enter Your Name:", "Player Name", JOptionPane.PLAIN_MESSAGE);
+        if (name == null || name.trim().isEmpty()) {
+            name = "Player";
+        }
+
         // Create dialog for welcome screen
         JDialog welcomeDialog = new JDialog(this, "Welcome to Sudoku", true);
         welcomeDialog.setLayout(new GridBagLayout());  // Use GridBagLayout for centering components
