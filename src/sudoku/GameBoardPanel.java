@@ -60,6 +60,24 @@ public class GameBoardPanel extends JPanel {
         // Initialize timer variables
         secondsElapsed = 0;
     }
+    private JPanel createLevelButtons() {
+        JButton easyButton = new JButton("Easy");
+        easyButton.addActionListener(e -> newGame(GameLevel.EASY));
+
+        JButton intermediateButton = new JButton("Intermediate");
+        intermediateButton.addActionListener(e -> newGame(GameLevel.INTERMEDIATE));
+
+        JButton difficultButton = new JButton("Difficult");
+        difficultButton.addActionListener(e -> newGame(GameLevel.DIFFICULT));
+
+        JPanel levelPanel = new JPanel();
+        levelPanel.add(easyButton);
+        levelPanel.add(intermediateButton);
+        levelPanel.add(difficultButton);
+
+        return levelPanel;
+    }
+
 
     // Start a new game with a specific level
     public void newGame(GameLevel level) {
