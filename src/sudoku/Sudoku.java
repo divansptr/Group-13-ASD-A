@@ -112,6 +112,8 @@ public class Sudoku extends JFrame {
         welcomeDialog.setLocationRelativeTo(null);  // Center the dialog on the screen
         welcomeDialog.setVisible(true);  // Show the dialog
     }
+
+    //add sidepanel
     // Method to create the side panel with strategy
     private JPanel createSidePanel() {
         JPanel sidePanel = new JPanel();
