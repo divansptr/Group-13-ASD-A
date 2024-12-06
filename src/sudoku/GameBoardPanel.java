@@ -30,19 +30,17 @@ public class GameBoardPanel extends JPanel {
             }
         }
 
-        // [TODO 3] Allocate a common listener as the ActionEvent listener for all the
-        //  Cells (JTextFields)
-        CellInputListener listener = new CellInputListener();
+        // Allocate a common KeyListener for all the cells
+        CellKeyListener keyListener = new CellKeyListener();
 
-        // [TODO 4] Adds this common listener to all editable cells
+        // Adds this common listener to all editable cells
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
                 if (cells[row][col].isEditable()) { // Memastikan hanya untuk sel yang editable
-                    cells[row][col].addActionListener(listener); // Tambahkan listener
+                    cells[row][col].addKeyListener(keyListener); // Add KeyListener here
                 }
             }
         }
-
 
         super.setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
     }
@@ -78,39 +76,46 @@ public class GameBoardPanel extends JPanel {
         return true;
     }
 
-    // [TODO 2] Define a Listener Inner Class for all the editable Cells
-    private class CellInputListener implements ActionListener {
+    // KeyListener implementation
+    private class CellKeyListener implements KeyListener {
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void keyPressed(KeyEvent e) {
+            // We don't need this method for our case, so we can leave it empty or add logic if needed
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            // We don't need this method for our case, so we can leave it empty or add logic if needed
+        }
+
+        @Override
+        public void keyTyped(KeyEvent e) {
             // Get a reference of the JTextField that triggers this action event
             Cell sourceCell = (Cell) e.getSource();
 
-            // Retrieve the int entered
-            int numberIn = Integer.parseInt(sourceCell.getText());
-            // For debugging
-            System.out.println("You entered " + numberIn);
+            // Only process number inputs (1-9)
+            char typedChar = e.getKeyChar();
+            if (typedChar >= '1' && typedChar <= '9') {
+                // Get the number entered by the user
+                int numberIn = Character.getNumericValue(typedChar);
+                System.out.println("You entered " + numberIn);
 
-            /*
-             * [TODO 5] (later - after TODO 3 and 4)
-             * Check the numberIn against sourceCell.number.
-             * Update the cell status sourceCell.status,
-             * and re-paint the cell via sourceCell.paint().
-             */
-            if (numberIn == sourceCell.number) {
-                sourceCell.status = CellStatus.CORRECT_GUESS; //update status kalau benar
+                // Check the numberIn against sourceCell.number
+                if (numberIn == sourceCell.number) {
+                    sourceCell.status = CellStatus.CORRECT_GUESS; // Update status if correct
+                } else {
+                    sourceCell.status = CellStatus.WRONG_GUESS;  // Update status if wrong
+                }
+
+                sourceCell.paint();   // Repaint this cell based on its status
+
+                // Check if the player has solved the puzzle after this move
+                if (isSolved()) {
+                    JOptionPane.showMessageDialog(null, "Congratulations! You solved the puzzle!", "Puzzle Solved", JOptionPane.INFORMATION_MESSAGE);
+                }
             } else {
-                sourceCell.status = CellStatus.WRONG_GUESS;  //update status kalau salah
-            }
-
-            sourceCell.paint();   // re-paint this cell based on its status
-
-            /*
-             * [TODO 6] (later)
-             * Check if the player has solved the puzzle after this move,
-             *   by calling isSolved(). Put up a congratulation JOptionPane, if so.
-             */
-            if (isSolved()) {
-                JOptionPane.showMessageDialog(null, "WOWWW gg banh", "Congratz", JOptionPane.INFORMATION_MESSAGE);
+                // Ignore non-numeric inputs
+                System.out.println("Invalid input. Please enter a number between 1 and 9.");
             }
         }
     }
