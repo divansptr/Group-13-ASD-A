@@ -30,6 +30,9 @@ public class Sudoku extends JFrame {
 
         btnNewGame.addActionListener(e -> board.newGame());
 
+        // Add side panel to the EAST (right side)
+        JPanel sidePanel = createSidePanel();
+        cp.add(sidePanel, BorderLayout.EAST);
 
         // Initialize the game board to start the game
         board.newGame();
@@ -109,4 +112,52 @@ public class Sudoku extends JFrame {
         welcomeDialog.setLocationRelativeTo(null);  // Center the dialog on the screen
         welcomeDialog.setVisible(true);  // Show the dialog
     }
+    // Method to create the side panel with strategy
+    private JPanel createSidePanel() {
+        JPanel sidePanel = new JPanel();
+        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));  // Stack components vertically
+
+        // Add a label with the player's name
+        JLabel playerLabel = new JLabel("Player: " + playerName);
+        playerLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        sidePanel.add(playerLabel);
+
+        // Add a button for resetting the game
+        JButton resetButton = new JButton("Reset Game");
+        resetButton.addActionListener(e -> {
+            board.newGame();  // Reset the game
+            JOptionPane.showMessageDialog(null, "Game Reset!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        });
+        sidePanel.add(resetButton);
+
+        // Add a label for strategy or tips
+        JLabel strategyLabel = new JLabel("Strategy & Tips:");
+        strategyLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        sidePanel.add(strategyLabel);
+
+        // Add a text area or label to display some tips for solving Sudoku
+        JTextArea strategyText = new JTextArea();
+        strategyText.setEditable(false);  // Make the text area non-editable
+        strategyText.setFont(new Font("Arial", Font.PLAIN, 14));
+        strategyText.setText(
+                    "1. Start with easy numbers.\n" +
+                            "2. Fill in the most obvious values first.\n" +
+                            "3. Look for rows, columns, and grids with the fewest missing numbers.\n" +
+                            "4. Use the process of elimination.\n" +
+                            "5. Stay patient and don't guess!\n"
+        );
+        strategyText.setWrapStyleWord(true);
+        strategyText.setLineWrap(true);
+        strategyText.setBackground(sidePanel.getBackground());  // Match background color
+        sidePanel.add(strategyText);
+
+        // Add any other components you want here
+
+        return sidePanel;
+    }
+
+    public static void main(String[] args) {
+        new Sudoku();  // Create and display the main Sudoku GUI
+    }
 }
+
