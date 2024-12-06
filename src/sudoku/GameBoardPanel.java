@@ -63,14 +63,21 @@ public class GameBoardPanel extends JPanel {
 
     // Start a new game
     public void newGame() {
+        if (gameTimer != null) {
+            gameTimer.stop(); // Stop the current timer if it's running
+        }
+        secondsElapsed = 0; // Reset the timer to 0
+        timerLabel.setText("Time: 00:00:00"); // Reset the displayed time
+
         puzzle.newPuzzle(2);
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
                 cells[row][col].newGame(puzzle.numbers[row][col], puzzle.isGiven[row][col]);
             }
         }
-        startTimer();  // Start the timer when a new game begins
+        startTimer(); // Start the timer for the new game
     }
+
 
     // Check if the puzzle is solved
     public boolean isSolved() {
@@ -101,7 +108,6 @@ public class GameBoardPanel extends JPanel {
         });
         gameTimer.start();  // Start the timer
     }
-
 
     // Stop the timer
     private void stopTimer() {
@@ -138,7 +144,18 @@ public class GameBoardPanel extends JPanel {
                 // Check if the puzzle is solved
                 if (isSolved()) {
                     stopTimer();  // Stop the timer
-                    JOptionPane.showMessageDialog(null, "Congratulations! You solved the puzzle in " + secondsElapsed + " seconds!", "Puzzle Solved", JOptionPane.INFORMATION_MESSAGE);
+
+                    // Calculate final time in hh:mm:ss format
+                    int hours = secondsElapsed / 3600;
+                    int minutes = (secondsElapsed % 3600) / 60;
+                    int seconds = secondsElapsed % 60;
+                    String timeFormatted = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+                    // Display the formatted time in the pop-up
+                    JOptionPane.showMessageDialog(null,
+                            "Congratulations! You solved the puzzle in " + timeFormatted + "!",
+                            "Puzzle Solved",
+                            JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         }
