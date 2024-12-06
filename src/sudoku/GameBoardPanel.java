@@ -115,6 +115,7 @@ public class GameBoardPanel extends JPanel {
         }
     }
 
+
     // KeyListener implementation for cell inputs
     private class CellKeyListener implements KeyListener {
         @Override
