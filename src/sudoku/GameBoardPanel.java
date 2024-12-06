@@ -110,7 +110,7 @@ public class GameBoardPanel extends JPanel {
              *   by calling isSolved(). Put up a congratulation JOptionPane, if so.
              */
             if (isSolved()) {
-                JOptionPane.showMessageDialog(null, "Congratzzz! Your sudoku is done!", "Congratulation", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "WOWWW gg banh", "Congratz", JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
