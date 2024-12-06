@@ -61,15 +61,15 @@ public class GameBoardPanel extends JPanel {
         secondsElapsed = 0;
     }
 
-    // Start a new game
-    public void newGame() {
+    // Start a new game with a specific level
+    public void newGame(GameLevel level) {
         if (gameTimer != null) {
             gameTimer.stop(); // Stop the current timer if it's running
         }
         secondsElapsed = 0; // Reset the timer to 0
         timerLabel.setText("Time: 00:00:00"); // Reset the displayed time
 
-        puzzle.newPuzzle(2);
+        puzzle.newPuzzle(level.getEmptyCells()); // Pass the number of empty cells for the level
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
                 cells[row][col].newGame(puzzle.numbers[row][col], puzzle.isGiven[row][col]);
@@ -77,7 +77,6 @@ public class GameBoardPanel extends JPanel {
         }
         startTimer(); // Start the timer for the new game
     }
-
 
     // Check if the puzzle is solved
     public boolean isSolved() {
@@ -119,14 +118,10 @@ public class GameBoardPanel extends JPanel {
     // KeyListener implementation for cell inputs
     private class CellKeyListener implements KeyListener {
         @Override
-        public void keyPressed(KeyEvent e) {
-            // We don't need this method for our case, so we can leave it empty
-        }
+        public void keyPressed(KeyEvent e) {}
 
         @Override
-        public void keyReleased(KeyEvent e) {
-            // We don't need this method for our case, so we can leave it empty
-        }
+        public void keyReleased(KeyEvent e) {}
 
         @Override
         public void keyTyped(KeyEvent e) {

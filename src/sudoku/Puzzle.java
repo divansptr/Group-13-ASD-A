@@ -1,4 +1,7 @@
 package sudoku;
+
+import java.util.Random;
+
 /**
  * The Sudoku number puzzle to be solved
  */
@@ -11,7 +14,7 @@ public class Puzzle {
 
     // Constructor
     public Puzzle() {
-        super(); //supernya adalah object krn ga extend apa2
+        super(); // supernya adalah object krn ga extend apa2
     }
 
     // Generate a new puzzle given the number of cells to be guessed, which can be used
@@ -20,7 +23,7 @@ public class Puzzle {
     public void newPuzzle(int cellsToGuess) {
         // I hardcode a puzzle here for illustration and testing.
         int[][] hardcodedNumbers =
-                        {{5, 3, 4, 6, 7, 8, 9, 1, 2},
+                {{5, 3, 4, 6, 7, 8, 9, 1, 2},
                         {6, 7, 2, 1, 9, 5, 3, 4, 8},
                         {1, 9, 8, 3, 4, 2, 5, 6, 7},
                         {8, 5, 9, 7, 6, 1, 4, 2, 3},
@@ -37,23 +40,24 @@ public class Puzzle {
             }
         }
 
-        // Need to use input parameter cellsToGuess!
-        // Hardcoded for testing, only 2 cells of "8" is NOT GIVEN
-        boolean[][] hardcodedIsGiven =
-                        {{true, true, true, true, true, false, true, true, true},
-                        {true, true, true, true, true, true, true, true, false},
-                        {true, true, true, true, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true},
-                        {true, true, true, true, true, true, true, true, true}};
-
-        // Copy from hardcodedIsGiven into array "isGiven"
+        // Initialize all cells as "given"
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
-                isGiven[row][col] = hardcodedIsGiven[row][col];
+                isGiven[row][col] = true;
+            }
+        }
+
+        // Randomly make 'cellsToGuess' number of cells not given
+        Random random = new Random();
+        int cellsRemoved = 0;
+        while (cellsRemoved < cellsToGuess) {
+            int row = random.nextInt(SudokuConstants.GRID_SIZE);
+            int col = random.nextInt(SudokuConstants.GRID_SIZE);
+
+            // Ensure the cell is not already removed
+            if (isGiven[row][col]) {
+                isGiven[row][col] = false;
+                cellsRemoved++;
             }
         }
     }

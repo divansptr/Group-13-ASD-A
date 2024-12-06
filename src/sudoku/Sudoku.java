@@ -1,83 +1,75 @@
 package sudoku;
-import java.awt.*;
-import java.util.TimerTask;
-import java.util.Timer;
-import javax.swing.*;
-/**
- * The main Sudoku program
- */
-public class Sudoku extends JFrame {
-    private static final long serialVersionUID = 1L;  // to prevent serial warning
 
-    // private variables
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import javax.swing.*;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class Sudoku extends JFrame {
+    private static final long serialVersionUID = 1L;
+
     GameBoardPanel board = new GameBoardPanel();
     JButton btnNewGame = new JButton("New Game");
-    private String playerName; //tambahan fitur input name
+    private String playerName;
 
-    // Constructor
     public Sudoku() {
         welcomeScreen();
 
+        SoundEffect backSound = new SoundEffect("sudoku/music.wav");
+        backSound.play();
+
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
-
         cp.add(board, BorderLayout.CENTER);
 
-        // Add a button to the south to re-start the game via board.newGame()
         JPanel panel = new JPanel();
         panel.add(btnNewGame);
         cp.add(panel, BorderLayout.SOUTH);
 
-        btnNewGame.addActionListener(e -> board.newGame());
+        btnNewGame.addActionListener(e -> {
+            showDifficultySelection(); // Show difficulty selection when New Game is clicked
+        });
 
-
-        // Initialize the game board to start the game
-        board.newGame();
-
-        pack();     // Pack the UI components, instead of using setSize()
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // to handle window-closing
+        pack();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Sudoku");
         setVisible(true);
     }
 
     private void welcomeScreen() {
-        // Prompt for player name first
+        // Get player's name from input dialog
         String name = JOptionPane.showInputDialog(this, "Enter Your Name:", "Player Name", JOptionPane.PLAIN_MESSAGE);
         if (name == null || name.trim().isEmpty()) {
-            name = "Player";
+            name = "Player"; // Default to "Player" if no name is entered
         }
 
-        // Create dialog for welcome screen
         JDialog welcomeDialog = new JDialog(this, "Welcome to Sudoku", true);
-        welcomeDialog.setLayout(new GridBagLayout());  // Use GridBagLayout for centering components
+        welcomeDialog.setLayout(new GridBagLayout());
 
-        // Typing effect for the welcome message
         JTextArea welcomeLabel = new JTextArea();
-        welcomeLabel.setFont(new Font("Verdana", Font.BOLD, 28));  // More suitable font for game
-        welcomeLabel.setWrapStyleWord(true);  // Wrap at word boundaries
-        welcomeLabel.setLineWrap(true);  // Enable line wrapping
-        welcomeLabel.setEditable(false);  // Make it non-editable
-        welcomeLabel.setBackground(welcomeDialog.getBackground());  // Match background color
-        welcomeLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));  // Padding around text
-
-        // Set preferred size to control text area height and width
+        welcomeLabel.setFont(new Font("Verdana", Font.BOLD, 28));
+        welcomeLabel.setWrapStyleWord(true);
+        welcomeLabel.setLineWrap(true);
+        welcomeLabel.setEditable(false);
+        welcomeLabel.setBackground(welcomeDialog.getBackground());
+        welcomeLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         welcomeLabel.setPreferredSize(new Dimension(450, 200));
 
-        // Create a panel to center the text
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BorderLayout());
         textPanel.add(welcomeLabel, BorderLayout.CENTER);
 
-        // Create the complete text and variables to track progress
         String completeText = "Ready, Set, Solve! The Sudoku challenge awaits you!";
-        Timer timer = new Timer();  // Use Timer from java.util package
+        Timer timer = new Timer();
 
-        // Declare the Start Game button as a final variable to use it inside TimerTask
         final JButton startButton = new JButton("Start Game");
-        startButton.setEnabled(false);  // Start button is disabled initially
-        startButton.addActionListener(e -> welcomeDialog.dispose());
+        startButton.setEnabled(false);
+        startButton.addActionListener(e -> {
+            welcomeDialog.dispose();
+            showDifficultySelection();  // Show level selection after clicking "Start Game"
+        });
 
-        // Create TimerTask for typing effect
         TimerTask typingTask = new TimerTask() {
             int index = 0;
 
@@ -87,26 +79,56 @@ public class Sudoku extends JFrame {
                     welcomeLabel.setText(welcomeLabel.getText() + completeText.charAt(index));
                     index++;
                 } else {
-                    startButton.setEnabled(true);  // Enable the Start Game button after typing is complete
-                    timer.cancel();  // Cancel the timer after the text is fully typed
+                    startButton.setEnabled(true);
+                    timer.cancel();
                 }
             }
         };
-        timer.schedule(typingTask, 0, 100);  // Schedule the typing effect with 100ms delay
+        timer.schedule(typingTask, 0, 100);
 
-        // Add components to the dialog
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.CENTER;
-        welcomeDialog.add(textPanel, gbc);  // Add the text panel at the center
+        welcomeDialog.add(textPanel, gbc);
 
         gbc.gridy = 1;
-        welcomeDialog.add(startButton, gbc);  // Add the Start button below the text panel
+        welcomeDialog.add(startButton, gbc);
 
-        // Set dialog properties
-        welcomeDialog.setSize(500, 350);  // Adjust dialog size
-        welcomeDialog.setLocationRelativeTo(null);  // Center the dialog on the screen
-        welcomeDialog.setVisible(true);  // Show the dialog
+        welcomeDialog.setSize(500, 350);
+        welcomeDialog.setLocationRelativeTo(null);
+        welcomeDialog.setVisible(true);
     }
+
+    private void showDifficultySelection() {
+        // Show difficulty selection dialog after starting the game
+        String[] options = {"Easy", "Intermediate", "Difficult"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Select Difficulty Level:",
+                "New Game",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        GameLevel selectedLevel;
+        switch (choice) {
+            case 1:
+                selectedLevel = GameLevel.INTERMEDIATE;
+                break;
+            case 2:
+                selectedLevel = GameLevel.DIFFICULT;
+                break;
+            case 0:
+            default:
+                selectedLevel = GameLevel.EASY;
+                break;
+        }
+
+        board.newGame(selectedLevel);  // Pass the selected difficulty level to GameBoardPanel
+    }
+
 }
